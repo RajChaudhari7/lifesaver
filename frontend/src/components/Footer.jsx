@@ -8,7 +8,7 @@ const Footer = () => {
 
                 {/* ---- Left section ---- */}
                 <div>
-                    <img className='mb-5 w-40' src={assets.logo} alt="" />
+                    <img className='mb-5 w-20' src={assets.logo} alt="" />
                     <p className='w-full md:w-2/3 text-gray-600 leading-6'>At <b className='text-black'>Life Saver,</b> we are committed to making healthcare more accessible and stress-free. Our platform helps you easily book hospital appointments, manage your health records, and stay connected with trusted doctors — all in one place. <br />
                         With fast, reliable, and user-friendly services, Life Saver ensures that taking care of your health is always simple and convenient. Whether it's scheduling your next check-up or finding the right specialist, we are here to support you every step of the way. <br /> <b className='text-red-600 text-lg'>Your health, our priority — Life Saver.</b>
                     </p>
