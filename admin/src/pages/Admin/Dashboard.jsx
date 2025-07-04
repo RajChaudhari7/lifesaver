@@ -41,10 +41,10 @@ const Dashboard = () => {
         </div>
 
         <div className='flex items-center gap-2 bg-white p-2 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
-          <img className='w-14' src={assets.patients_icon} alt="" />
+          <img onClick={() => { navigate('/patient'); scrollTo(0, 0) }} className='w-14' src={assets.patients_icon} alt="" />
           <div>
-            <p className='text-xl font-semibold text-gray-600'>{dashData.patients}</p>
-            <p className='text-gray-400'>Patients</p>
+            <p onClick={() => { navigate('/patient'); scrollTo(0, 0) }} className='text-xl font-semibold text-gray-600'>{dashData.patients}</p>
+            <p onClick={() => { navigate('/patient'); scrollTo(0, 0) }} className='text-gray-400'>Patients</p>
           </div>
         </div>
 

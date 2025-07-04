@@ -202,4 +202,68 @@ const deleteDoctor = async (req, res) => {
     }
 };
 
-export { addDoctor, loginAdmin, allDoctors, appointmentsAdmin, appointmentCancel, adminDashboard, deleteDoctor }
+// Function to calculate age from date of birth
+const calculateAge = (dob) => {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
+};
+
+// Get all patients
+const getAllPatients = async (req, res) => {
+  try {
+    const users = await userModel.find().select('-password');
+
+    const usersWithAgeAndAppointments = await Promise.all(users.map(async (user) => {
+      const age = user.dob && user.dob !== "Not Selected" ? calculateAge(user.dob) : null;
+
+      // Fetch appointments for the current user
+      const appointments = await appointmentModel.find({ userId: user._id });
+
+      // Extract doctor information from the appointments
+      const doctors = appointments.map(appointment => ({
+        doctorName: appointment.docData.name,
+        appointmentDate: appointment.slotDate,
+        appointmentTime: appointment.slotTime
+      }));
+
+      return {
+        ...user.toObject(),
+        age,
+        doctors
+      };
+    }));
+
+    res.json({ success: true, patients: usersWithAgeAndAppointments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete a patient
+const deletePatient = async (req, res) => {
+  try {
+    const { patientId } = req.body;
+
+    // Delete the patient
+    await userModel.findByIdAndDelete(patientId);
+
+    // Optionally, you can also delete related appointments
+    await appointmentModel.deleteMany({ userId: patientId });
+
+    res.json({ success: true, message: "Patient deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { addDoctor, loginAdmin, allDoctors, appointmentsAdmin, appointmentCancel, adminDashboard, deleteDoctor, deletePatient, getAllPatients }

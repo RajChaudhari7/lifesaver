@@ -1,5 +1,6 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
     return (
@@ -18,11 +19,10 @@ const Footer = () => {
                 <div>
                     <p className='text-xl font-medium mb-5'>COMPANY</p>
                     <ul className='flex flex-col gap-2 text-gray-600'>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/doctors">All Doctors</a></li>
-                        <li><a href="/about">About us</a></li>
-                        <li><a href="/contact">Contact Us</a></li>
-
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/doctors">All Doctors</Link></li>
+                        <li><Link to="/about">About us</Link></li>
+                        <li><Link to="/contact">Contact Us</Link></li>
                     </ul>
                 </div>
 
