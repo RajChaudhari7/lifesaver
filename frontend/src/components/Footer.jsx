@@ -1,48 +1,58 @@
-import React from 'react'
-import { assets } from '../assets/assets'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { assets } from '../assets/assets';
+import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
-const Footer = () => {
-    return (
-        <div className='md:mx-10'>
-            <div className='flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm'>
+export const Footer = () => {
+  return (
+    <footer className="bg-gray-50 border-t mt-24">
+      <div className="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-4 gap-10 text-sm">
 
-                {/* ---- Left section ---- */}
-                <div>
-                    <img className='mb-5 w-20' src={assets.logo} alt="" />
-                    <p className='w-full md:w-2/3 text-gray-600 leading-6'>At <b className='text-black'>Life Saver,</b> we are committed to making healthcare more accessible and stress-free. Our platform helps you easily book hospital appointments, manage your health records, and stay connected with trusted doctors — all in one place. <br />
-                        With fast, reliable, and user-friendly services, Life Saver ensures that taking care of your health is always simple and convenient. Whether it's scheduling your next check-up or finding the right specialist, we are here to support you every step of the way. <br /> <b className='text-red-600 text-lg'>Your health, our priority — Life Saver.</b>
-                    </p>
-                </div>
-
-                {/* ---- Center section ---- */}
-                <div>
-                    <p className='text-xl font-medium mb-5'>COMPANY</p>
-                    <ul className='flex flex-col gap-2 text-gray-600'>
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="/doctors">All Doctors</Link></li>
-                        <li><Link to="/about">About us</Link></li>
-                        <li><Link to="/contact">Contact Us</Link></li>
-                    </ul>
-                </div>
-
-                {/* ---- Right section ---- */}
-                <div>
-                    <p className='text-xl font-medium mb-5'>GET IN TOUCH</p>
-                    <ul className='flex flex-col gap-2 text-gray-600'>
-                        <li>8600412566</li>
-                        <li>lifesaver@gmail.com</li>
-                    </ul>
-                </div>
-
-            </div>
-            {/* ------ CopuRight text ----- */}
-            <div>
-                <hr />
-                <p className='py-5 text-sm text-center'>Copyright @{new Date().getFullYear()} LifeSaver - All Rights Reserved.</p>
-            </div>
+        {/* Brand */}
+        <div>
+          <img src={assets.logo} className="w-24 mb-4" alt="logo" />
+          <p className="text-gray-600 leading-6">
+            Making healthcare simple, accessible, and stress-free. Book appointments, connect with trusted doctors, and manage your health seamlessly.
+          </p>
         </div>
-    )
-}
 
-export default Footer
+        {/* Links */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Company</h3>
+          <ul className="space-y-2 text-gray-600">
+            <li><Link className="hover:text-black transition" to="/">Home</Link></li>
+            <li><Link className="hover:text-black transition" to="/doctors">Doctors</Link></li>
+            <li><Link className="hover:text-black transition" to="/about">About</Link></li>
+            <li><Link className="hover:text-black transition" to="/contact">Contact</Link></li>
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Contact</h3>
+          <ul className="space-y-2 text-gray-600">
+            <li>📞 8600412566</li>
+            <li>📧 lifesaver@gmail.com</li>
+          </ul>
+        </div>
+
+        {/* Social */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
+          <div className="flex gap-4 text-gray-600">
+            <Facebook className="cursor-pointer hover:text-black" />
+            <Twitter className="cursor-pointer hover:text-black" />
+            <Instagram className="cursor-pointer hover:text-black" />
+            <Linkedin className="cursor-pointer hover:text-black" />
+          </div>
+        </div>
+
+      </div>
+
+      {/* Bottom */}
+      <div className="border-t text-center py-5 text-gray-500 text-sm">
+        © {new Date().getFullYear()} LifeSaver. All rights reserved.
+      </div>
+    </footer>
+  );
+};
