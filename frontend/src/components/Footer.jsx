@@ -1,7 +1,7 @@
 import React from 'react';
 import { assets } from '../assets/assets';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Twitter, Instagram, Linkedin } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -40,7 +40,6 @@ export const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
           <div className="flex gap-4 text-gray-600">
-            <Facebook className="cursor-pointer hover:text-black" />
             <Twitter className="cursor-pointer hover:text-black" />
             <Instagram className="cursor-pointer hover:text-black" />
             <Linkedin className="cursor-pointer hover:text-black" />
