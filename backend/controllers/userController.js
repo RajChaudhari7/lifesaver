@@ -6,7 +6,6 @@ import { v2 as cloudinary } from 'cloudinary'
 import doctorModel from '../models/doctorModel.js'
 import appointmentModel from '../models/appointmentModel.js'
 import razorpay from 'razorpay'
-import admin from "../config/firebaseAdmin.js";
 
 // api to register user
 
@@ -60,37 +59,6 @@ const registerUser = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
-
-const firebaseAuth = async (req, res) => {
-    try {
-        const { token } = req.body;
-
-        // 🔥 Verify Firebase Token
-        const decoded = await admin.auth().verifyIdToken(token);
-
-        const { email, name, picture } = decoded;
-
-        let user = await userModel.findOne({ email });
-
-        if (!user) {
-            user = await userModel.create({
-                name: name || "Google User",
-                email,
-                password: "google_auth",
-                image: picture
-            });
-        }
-
-        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-
-        res.json({ success: true, token: jwtToken });
-
-    } catch (error) {
-        res.json({ success: false, message: error.message });
-    }
-};
-
-export { firebaseAuth };
 
 // api for userlogin
 
@@ -332,9 +300,9 @@ const verifyRazorpay = async (req, res) => {
 
         if (orderInfo.status === 'paid') {
             await appointmentModel.findByIdAndUpdate(orderInfo.receipt, { payment: true })
-            res.json({ success: true, message: "Payment Successful" })
-        } else {
-            res.json({ success: false, message: "Payment Failed" })
+            res.json({success:true, message:"Payment Successful"})
+        } else{
+            res.json({success:false, message:"Payment Failed"})
         }
 
 
@@ -349,4 +317,4 @@ const verifyRazorpay = async (req, res) => {
 
 
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay }
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay}
