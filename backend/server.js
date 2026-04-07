@@ -17,7 +17,7 @@ connectCloudinary()
 // middlewares
 app.use(
     cors({
-        origin: ["http://localhost:5173", "https://lifesave.vercel.app"],
+        origin: ["http://localhost:5173", "https://lifesave.vercel.app", "https://lifesaver-admin.vercel.app"],
         credentials: true
     })
 );
