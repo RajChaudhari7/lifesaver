@@ -11,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const { backendUrl, setToken } = useContext(AppContext);
+  const { setToken } = useContext(AppContext);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
 
   const [isSignup, setIsSignup] = useState(false);
