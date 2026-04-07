@@ -15,13 +15,18 @@ connectDB()
 connectCloudinary()
 
 // middlewares
-app.use(express.json())
+app.use(
+    cors({
+        origin: ["http://localhost:5173", "https://lifesave.vercel.app"],
+        credentials: true
+    })
+);
 app.use(cors())
 
 // api endpoints
 app.use('/api/admin', adminRouter)
-app.use('/api/doctor',doctorRouter)
-app.use('/api/user',userRouter)
+app.use('/api/doctor', doctorRouter)
+app.use('/api/user', userRouter)
 
 
 app.get('/', (req, res) => {
