@@ -1,80 +1,150 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../context/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from "react";
+import { googleProvider, auth } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup
+} from "firebase/auth";
+import axios from "axios";
+import { AppContext } from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const { backendUrl, token, setToken } = useContext(AppContext);
+  const { backendUrl, setToken } = useContext(AppContext);
   const navigate = useNavigate();
-  const [state, setState] = useState('Sign Up');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
 
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
+  const [isSignup, setIsSignup] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // 🔥 Firebase Auth Handler
+  const handleAuth = async (e) => {
+    e.preventDefault();
 
     try {
-      if (state === 'Sign Up') {
-        const { data } = await axios.post(backendUrl + '/api/user/register', { name, email, password });
-        if (data.success) {
-          toast.success("Successfully registered! Please log in.");
-          setState('Login'); // Switch to login state
-        } else {
-          toast.error(data.message);
-        }
+      let userCredential;
+
+      if (isSignup) {
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
       } else {
-        const { data } = await axios.post(backendUrl + '/api/user/login', { email, password });
-        if (data.success) {
-          localStorage.setItem('token', data.token);
-          setToken(data.token);
-          toast.success("Welcome to Life Saver!");
-        } else {
-          toast.error(data.message);
-        }
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       }
+
+      // 🔥 Get Firebase Token
+      const firebaseToken = await userCredential.user.getIdToken();
+
+      // 🔥 Send to backend
+      const { data } = await axios.post(`${backendUrl}/api/user/firebase-auth`, {
+        token: firebaseToken
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        toast.success("Welcome to Life Saver 🏥");
+        navigate("/");
+      }
+
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  useEffect(() => {
-    if (token) {
-      navigate('/');
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      // 🔥 Get Firebase Token
+      const firebaseToken = await result.user.getIdToken();
+
+      // 🔥 Send to backend
+      const { data } = await axios.post(`${backendUrl}/api/user/firebase-auth`, {
+        token: firebaseToken
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        toast.success("Logged in with Google 🏥");
+        navigate("/");
+      }
+
+    } catch (error) {
+      toast.error(error.message);
     }
-  }, [token, navigate]);
+  };
 
   return (
-    <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
-      <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg'>
-        <p className='text-2xl font-semibold'>{state === 'Sign Up' ? "Create Account" : "Login"}</p>
-        <p>Please {state === 'Sign Up' ? "sign up" : "log in"} to book appointment</p>
+    <div className="min-h-screen flex">
 
-        {state === "Sign Up" && (
-          <div className='w-full'>
-            <p>Full Name</p>
-            <input className='border border-zinc-300 rounded w-full p-2 mt-1' type="text" onChange={(e) => setName(e.target.value)} value={name} required />
-          </div>
-        )}
-
-        <div className='w-full'>
-          <p>Email</p>
-          <input className='border border-zinc-300 rounded w-full p-2 mt-1' type="email" onChange={(e) => setEmail(e.target.value)} value={email} required />
-        </div>
-
-        <div className='w-full'>
-          <p>Password</p>
-          <input className='border border-zinc-300 rounded w-full p-2 mt-1' type="password" onChange={(e) => setPassword(e.target.value)} value={password} required />
-        </div>
-
-        <button type='submit' className='bg-primary text-white w-full py-2 rounded-md text-base'>{state === 'Sign Up' ? "Create Account" : "Login"}</button>
-        {state === "Sign Up"
-          ? <p>Already have an account? <span onClick={() => setState('Login')} className='text-primary underline cursor-pointer'>Login here</span></p>
-          : <p>Create a new account? <span onClick={() => setState('Sign Up')} className='text-primary underline cursor-pointer'>Click Here</span></p>
-        }
+      {/* Left Side - Branding */}
+      <div className="hidden md:flex w-1/2 bg-primary text-white flex-col justify-center items-center">
+        <h1 className="text-4xl font-bold">Life Saver</h1>
+        <p className="mt-4 text-lg">Your Health, Our Priority</p>
       </div>
-    </form>
+
+      {/* Right Side - Form */}
+      <div className="flex w-full md:w-1/2 justify-center items-center">
+        <form
+          onSubmit={handleAuth}
+          className="w-[350px] p-8 shadow-xl rounded-xl border"
+        >
+          <h2 className="text-2xl font-bold text-center mb-2">
+            {isSignup ? "Patient Registration" : "Patient Login"}
+          </h2>
+
+          <p className="text-center text-gray-500 mb-6">
+            Access your medical dashboard
+          </p>
+
+          <input
+            type="email"
+            placeholder="Enter Email"
+            className="w-full p-3 border rounded mb-4"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Enter Password"
+            className="w-full p-3 border rounded mb-4"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button className="w-full bg-primary text-white py-3 rounded">
+            {isSignup ? "Register" : "Login"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full border py-3 rounded mt-3 flex items-center justify-center gap-2 hover:bg-gray-100"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="google"
+              className="w-5 h-5"
+            />
+            Continue with Google
+          </button>
+
+          <p className="text-sm mt-4 text-center">
+            {isSignup ? "Already registered?" : "New patient?"}
+            <span
+              onClick={() => setIsSignup(!isSignup)}
+              className="text-primary cursor-pointer ml-2"
+            >
+              {isSignup ? "Login" : "Create Account"}
+            </span>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 
