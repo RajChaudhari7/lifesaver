@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { assets } from '../assets/assets';
-import { Menu, X, ChevronDown, User, Calendar, LogOut } from 'lucide-react';
+import { Menu, X, ChevronDown, User, Calendar, LogOut, ShieldCheck } from 'lucide-react';
 import gsap from 'gsap';
 
 const Navbar = () => {
@@ -11,18 +11,14 @@ const Navbar = () => {
     const [open, setOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     
-    // GSAP Ref
     const navRef = useRef(null);
 
     useEffect(() => {
         let ctx = gsap.context(() => {
-            gsap.from(".nav-animate", {
-                y: -20,
-                opacity: 0,
-                duration: 0.6,
-                stagger: 0.1,
-                ease: "power3.out"
-            });
+            gsap.fromTo(".nav-animate", 
+                { y: -15, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" }
+            );
         }, navRef);
 
         return () => ctx.revert();
@@ -34,79 +30,112 @@ const Navbar = () => {
         navigate('/');
     };
 
+    // Enterprise-grade tab styling
     const navLinkStyle = ({ isActive }) =>
-        `nav-animate relative px-1 py-2 font-medium text-[15px] transition-colors duration-300 ${
-            isActive ? 'text-primary' : 'text-gray-600 hover:text-primary'
-        } after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-primary after:transition-transform after:duration-300 after:origin-left ${
-            isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
+        `nav-animate relative px-3 py-2 text-sm font-semibold transition-all duration-300 ${
+            isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md'
         }`;
 
     return (
         <header 
             ref={navRef} 
-            className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300"
+            className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all duration-300 w-full"
         >
-            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
                 
-                {/* Fixed: Responsive Logo (Smaller on mobile, normal on desktop) */}
-                <div className="nav-animate">
+                {/* --- Logo --- */}
+                <div className="nav-animate flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                     <img
                         src={assets.logo}
-                        onClick={() => navigate('/')}
-                        className="w-20 md:w-28 cursor-pointer hover:opacity-80 transition-opacity"
-                        alt="logo"
+                        className="w-32 hover:opacity-90 transition-opacity"
+                        alt="Life Saver Logo"
                     />
                 </div>
 
-                {/* Desktop Menu */}
-                <nav className="hidden md:flex items-center gap-8">
-                    <NavLink to="/" className={navLinkStyle}>Home</NavLink>
-                    <NavLink to="/doctors" className={navLinkStyle}>Doctors</NavLink>
-                    <NavLink to="/about" className={navLinkStyle}>About</NavLink>
-                    <NavLink to="/contact" className={navLinkStyle}>Contact</NavLink>
+                {/* --- Desktop Navigation --- */}
+                <nav className="hidden md:flex items-center gap-2 lg:gap-6">
+                    <NavLink to="/" className={navLinkStyle}>
+                        {({ isActive }) => (
+                            <>Home {isActive && <span className="absolute bottom-[-24px] left-0 w-full h-[3px] bg-blue-600 rounded-t-md"></span>}</>
+                        )}
+                    </NavLink>
+                    <NavLink to="/doctors" className={navLinkStyle}>
+                        {({ isActive }) => (
+                            <>Find Doctors {isActive && <span className="absolute bottom-[-24px] left-0 w-full h-[3px] bg-blue-600 rounded-t-md"></span>}</>
+                        )}
+                    </NavLink>
+                    <NavLink to="/about" className={navLinkStyle}>
+                        {({ isActive }) => (
+                            <>About Us {isActive && <span className="absolute bottom-[-24px] left-0 w-full h-[3px] bg-blue-600 rounded-t-md"></span>}</>
+                        )}
+                    </NavLink>
+                    <NavLink to="/contact" className={navLinkStyle}>
+                        {({ isActive }) => (
+                            <>Contact {isActive && <span className="absolute bottom-[-24px] left-0 w-full h-[3px] bg-blue-600 rounded-t-md"></span>}</>
+                        )}
+                    </NavLink>
                 </nav>
 
-                {/* Right Section */}
-                <div className="flex items-center gap-5">
+                {/* --- Right Section (Profile / CTA) --- */}
+                <div className="flex items-center gap-4">
                     {token ? (
                         <div
-                            className="nav-animate relative flex items-center gap-2 cursor-pointer p-1 rounded-full hover:bg-gray-50 transition-colors"
-                            onClick={() => setProfileOpen(!profileOpen)}
+                            className="nav-animate relative"
+                            onMouseEnter={() => setProfileOpen(true)}
                             onMouseLeave={() => setProfileOpen(false)} 
                         >
-                            <img
-                                src={userData?.image}
-                                className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-primary/20 shadow-sm"
-                                alt="profile"
-                            />
-                            <ChevronDown size={18} className={`text-gray-500 transition-transform duration-300 ${profileOpen ? 'rotate-180' : ''}`} />
+                            <div className="flex items-center gap-3 cursor-pointer pl-3 pr-2 py-1.5 rounded-full hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all">
+                                <div className="hidden lg:flex flex-col items-end">
+                                    <span className="text-xs font-bold text-slate-900">{userData?.name || 'Patient'}</span>
+                                    <span className="text-[10px] font-medium text-emerald-600 flex items-center gap-1">
+                                        <ShieldCheck size={10} /> Verified
+                                    </span>
+                                </div>
+                                <img
+                                    src={userData?.image || assets.default_avatar} // Fallback if no image
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm ring-1 ring-slate-200"
+                                    alt="profile"
+                                />
+                                <ChevronDown size={16} className={`text-slate-400 transition-transform duration-300 ${profileOpen ? 'rotate-180' : ''}`} />
+                            </div>
 
-                            {/* Dropdown Menu */}
-                            <div className={`absolute right-0 top-14 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 transition-all duration-300 origin-top-right ${profileOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}>
-                                <div onClick={() => navigate('/my-profile')} className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 hover:text-primary rounded-xl cursor-pointer transition-colors text-sm text-gray-700 font-medium">
-                                    <User size={18} /> My Profile
+                            {/* Enterprise Profile Dropdown */}
+                            <div className={`absolute right-0 top-[105%] w-64 bg-white rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] ring-1 ring-slate-900/5 transition-all duration-200 origin-top-right overflow-hidden ${profileOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}>
+                                
+                                {/* User Info Header */}
+                                <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100">
+                                    <p className="text-sm font-bold text-slate-900 truncate">{userData?.name || 'Patient Portal'}</p>
+                                    <p className="text-xs text-slate-500 truncate mt-0.5">{userData?.email || 'Manage your account'}</p>
                                 </div>
-                                <div onClick={() => navigate('/my-appointments')} className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 hover:text-primary rounded-xl cursor-pointer transition-colors text-sm text-gray-700 font-medium">
-                                    <Calendar size={18} /> Appointments
+
+                                <div className="p-2">
+                                    <div onClick={() => navigate('/my-profile')} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors text-sm text-slate-700 font-medium group">
+                                        <User size={16} className="text-slate-400 group-hover:text-blue-600 transition-colors" /> My Profile
+                                    </div>
+                                    <div onClick={() => navigate('/my-appointments')} className="flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors text-sm text-slate-700 font-medium group">
+                                        <Calendar size={16} className="text-slate-400 group-hover:text-blue-600 transition-colors" /> Appointments
+                                    </div>
                                 </div>
-                                <div className="h-[1px] bg-gray-100 my-1 mx-2"></div>
-                                <div onClick={logout} className="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-xl cursor-pointer transition-colors text-sm font-medium">
-                                    <LogOut size={18} /> Logout
+                                
+                                <div className="border-t border-slate-100 p-2">
+                                    <div onClick={logout} className="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors text-sm font-medium">
+                                        <LogOut size={16} /> Secure Logout
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
                         <button
                             onClick={() => navigate('/login')}
-                            className="nav-animate hidden md:flex items-center justify-center bg-primary text-white px-8 py-2.5 rounded-full text-sm font-medium shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                            className="nav-animate hidden md:flex items-center justify-center bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors duration-300"
                         >
-                            Get Started
+                            Patient Login
                         </button>
                     )}
 
-                    {/* Mobile Menu Toggle Button */}
+                    {/* Mobile Menu Toggle */}
                     <button
-                        className="nav-animate md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                        className="nav-animate md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
                         onClick={() => setOpen(true)}
                     >
                         <Menu size={24} />
@@ -114,68 +143,85 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* --- FIXED: Mobile Drawer --- */}
+            {/* --- Enterprise Mobile Drawer --- */}
             
-            {/* Backdrop Overlay (z-50 to cover header) */}
+            {/* Backdrop */}
             <div
-                className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition-opacity duration-300 md:hidden ${
+                className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] transition-opacity duration-300 md:hidden ${
                     open ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}
                 onClick={() => setOpen(false)}
             ></div>
 
-            {/* Drawer Panel (z-[60] to sit above backdrop, h-screen and bottom-0 to force full height) */}
+            {/* Drawer Panel */}
             <div
-                className={`fixed top-0 right-0 bottom-0 h-screen w-[80%] max-w-sm bg-white shadow-2xl z-[60] p-6 flex flex-col transition-transform duration-300 ease-in-out md:hidden ${
+                className={`fixed top-0 right-0 bottom-0 h-screen w-[85%] max-w-sm bg-white shadow-2xl z-[70] flex flex-col transition-transform duration-300 ease-out md:hidden ${
                     open ? 'translate-x-0' : 'translate-x-full'
                 }`}
             >
-                <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-100">
-                    {/* Fixed: Smaller Logo in Mobile Drawer */}
-                    <img src={assets.logo} className="w-20" alt="logo" />
-                    <button onClick={() => setOpen(false)} className="p-2 bg-gray-50 rounded-full text-gray-600 hover:bg-gray-200 transition-colors">
+                {/* Drawer Header */}
+                <div className="flex justify-between items-center p-6 border-b border-slate-100">
+                    <img src={assets.logo} className="w-28" alt="logo" />
+                    <button onClick={() => setOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors">
                         <X size={20} />
                     </button>
                 </div>
 
-                <nav className="flex flex-col gap-2 text-lg font-medium">
+                {/* User Profile Summary (If Logged In) */}
+                {token && (
+                    <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center gap-4">
+                        <img src={userData?.image || assets.default_avatar} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" alt="profile" />
+                        <div>
+                            <p className="text-sm font-bold text-slate-900">{userData?.name || 'Patient User'}</p>
+                            <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                                <ShieldCheck size={12} className="text-emerald-500" /> Verified Patient
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Mobile Nav Links */}
+                <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto">
                     {['Home', 'Doctors', 'About', 'Contact'].map((item) => (
                         <NavLink
                             key={item}
                             onClick={() => setOpen(false)}
                             to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
                             className={({ isActive }) =>
-                                `px-4 py-3 rounded-xl transition-colors ${
-                                    isActive ? 'bg-blue-50 text-primary' : 'text-gray-700 hover:bg-gray-50'
+                                `px-4 py-3.5 rounded-lg text-sm font-semibold transition-colors ${
+                                    isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:bg-slate-50'
                                 }`
                             }
                         >
-                            {item}
+                            {item === 'Doctors' ? 'Find Doctors' : item}
                         </NavLink>
                     ))}
+                    
+                    {/* Add Profile & Appointments to mobile nav if logged in */}
+                    {token && (
+                        <>
+                            <div className="h-px bg-slate-100 my-2 mx-4"></div>
+                            <NavLink onClick={() => setOpen(false)} to="/my-profile" className="px-4 py-3.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50">My Profile</NavLink>
+                            <NavLink onClick={() => setOpen(false)} to="/my-appointments" className="px-4 py-3.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50">Appointments</NavLink>
+                        </>
+                    )}
                 </nav>
 
-                <div className="mt-auto pt-8 pb-4">
+                {/* Mobile Footer Actions */}
+                <div className="p-6 border-t border-slate-100">
                     {token ? (
                         <button
-                            onClick={() => {
-                                logout();
-                                setOpen(false);
-                            }}
-                            className="w-full flex justify-center items-center gap-2 bg-red-50 text-red-600 py-3.5 rounded-xl font-medium hover:bg-red-100 transition-colors"
+                            onClick={() => { logout(); setOpen(false); }}
+                            className="w-full flex justify-center items-center gap-2 bg-white border border-slate-200 text-slate-700 py-3 rounded-lg text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
                         >
-                            <LogOut size={18} />
-                            Logout
+                            <LogOut size={18} /> Secure Logout
                         </button>
                     ) : (
                         <button
-                            onClick={() => {
-                                navigate('/login');
-                                setOpen(false);
-                            }}
-                            className="w-full bg-primary text-white py-3.5 rounded-xl font-medium shadow-md shadow-primary/20 hover:shadow-lg transition-all"
+                            onClick={() => { navigate('/login'); setOpen(false); }}
+                            className="w-full bg-slate-900 text-white py-3 rounded-lg text-sm font-semibold hover:bg-blue-600 transition-colors"
                         >
-                            Get Started
+                            Patient Login
                         </button>
                     )}
                 </div>
