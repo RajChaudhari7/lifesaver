@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import gsap from 'gsap';
 
-// --- Skeleton Loader Component ---
+// --- Polished Enterprise Skeleton Loader ---
 const DoctorSkeletonCard = () => (
-    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm animate-pulse">
-        <div className="w-full aspect-[4/5] bg-gray-200/60"></div>
-        {/* Adjusted padding for mobile */}
-        <div className="p-3 sm:p-5">
-            <div className="h-4 sm:h-5 bg-gray-200/80 rounded w-3/4 mb-2 sm:mb-3"></div>
-            <div className="h-3 sm:h-4 bg-gray-200/60 rounded w-1/2"></div>
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm animate-pulse">
+        <div className="w-full aspect-[4/5] bg-slate-100"></div>
+        <div className="p-5">
+            <div className="h-5 bg-slate-200 rounded w-3/4 mb-3"></div>
+            <div className="h-4 bg-slate-100 rounded w-1/2"></div>
         </div>
     </div>
 );
@@ -38,16 +37,18 @@ const TopDoctors = () => {
                     if (entries[0].isIntersecting) {
                         const tl = gsap.timeline();
                         
+                        // Clean fade-up for header
                         tl.fromTo(
                             headerRef.current,
-                            { opacity: 0, y: 30 },
+                            { opacity: 0, y: 20 },
                             { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
                         );
 
+                        // Professional subtle stagger for cards (No excessive scaling)
                         tl.fromTo(
                             cardsRef.current,
-                            { opacity: 0, y: 50, scale: 0.95 },
-                            { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: 'back.out(1.2)' },
+                            { opacity: 0, y: 30 },
+                            { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' },
                             "-=0.3"
                         );
 
@@ -63,28 +64,27 @@ const TopDoctors = () => {
     }, [isLoading, doctors]); 
 
     return (
-        <div ref={sectionRef} className='flex flex-col items-center gap-6 my-24 text-gray-900 md:mx-10 min-h-[500px]'>
+        <div ref={sectionRef} className='flex flex-col items-center gap-8 my-24 text-slate-900 md:mx-10 min-h-[500px]'>
             
-            {/* Header Section */}
-            <div ref={headerRef} className={`flex flex-col items-center gap-3 w-full px-4 ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
-                <div className='inline-block px-4 py-1.5 bg-blue-50 rounded-full border border-blue-100 mb-2'>
-                    <span className='text-xs font-bold tracking-wider text-primary uppercase'>
+            {/* --- Professional Header Section --- */}
+            <div ref={headerRef} className={`flex flex-col items-center gap-4 w-full px-4 ${isLoading ? 'opacity-100' : 'opacity-0'}`}>
+                <div className='inline-block px-3 py-1 bg-blue-50 border border-blue-100 rounded-md'>
+                    <span className='text-xs font-semibold tracking-widest text-blue-600 uppercase'>
                         Expert Care
                     </span>
                 </div>
-                <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-center'>
+                <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-center text-slate-900'>
                     Top Doctors to Book
-                </h1>
-                <p className='sm:w-1/2 text-center text-gray-500 text-sm md:text-base'>
-                    Simply browse through our extensive list of trusted, highly-rated medical professionals.
+                </h2>
+                <p className='sm:w-1/2 text-center text-slate-500 text-base font-light leading-relaxed'>
+                    Browse our extensive list of trusted, board-certified medical professionals and schedule your appointment securely.
                 </p>
             </div>
 
-            {/* --- UPDATED: Grid Section (grid-cols-2 for mobile) --- */}
-            <div className='w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 pt-8 px-4 sm:px-0'>
+            {/* --- Grid Section --- */}
+            <div className='w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 pt-8 px-4 sm:px-0'>
                 {isLoading ? (
-                    // Show 6 Skeletons so it looks even on 2-col and 3-col grids
-                    Array.from({ length: 6 }).map((_, index) => (
+                    Array.from({ length: 5 }).map((_, index) => (
                         <DoctorSkeletonCard key={`skeleton-${index}`} />
                     ))
                 ) : (
@@ -95,56 +95,54 @@ const TopDoctors = () => {
                                 navigate(`/appointment/${item._id}`);
                                 window.scrollTo(0, 0);
                             }}
-                            className='group relative bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-300 opacity-0'
+                            className='group relative bg-white border border-slate-200 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 opacity-0'
                             key={item._id || index}
                         >
-                            {/* Adjusted badge padding for mobile */}
-                            <div className={`absolute top-2 right-2 sm:top-3 sm:right-3 z-10 px-2 py-1 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold flex items-center gap-1 sm:gap-1.5 backdrop-blur-md shadow-sm border ${
+                            {/* Enterprise Status Indicator */}
+                            <div className={`absolute top-3 right-3 z-10 px-2.5 py-1 rounded-md text-[10px] font-bold flex items-center gap-1.5 shadow-sm border bg-white/90 backdrop-blur-md ${
                                 item.available 
-                                ? 'bg-green-50/90 text-green-600 border-green-200' 
-                                : 'bg-red-50/90 text-red-600 border-red-200'
+                                ? 'text-emerald-700 border-emerald-100' 
+                                : 'text-slate-500 border-slate-200'
                             }`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${item.available ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
+                                <span className={`relative flex h-2 w-2`}>
+                                    {item.available && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
+                                    <span className={`relative inline-flex rounded-full h-2 w-2 ${item.available ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+                                </span>
                                 {item.available ? 'Available' : 'Unavailable'}
                             </div>
 
-                            <div className='w-full aspect-[4/5] bg-blue-50/50 overflow-hidden flex items-end justify-center'>
+                            <div className='w-full aspect-[4/5] bg-slate-50 overflow-hidden flex items-end justify-center'>
                                 <img 
-                                    className='w-full h-full object-cover object-bottom transition-transform duration-500 group-hover:scale-105' 
+                                    className='w-full h-full object-cover object-bottom transition-transform duration-700 group-hover:scale-105' 
                                     src={item.image} 
                                     alt={item.name} 
                                 />
                             </div>
 
-                            {/* Adjusted text sizing and padding for mobile */}
-                            <div className='p-3 sm:p-5 bg-white'>
-                                <p className='text-gray-900 text-base sm:text-lg font-bold truncate group-hover:text-primary transition-colors'>
+                            <div className='p-4 sm:p-5 bg-white border-t border-slate-100'>
+                                <p className='text-slate-900 text-base sm:text-lg font-bold truncate group-hover:text-blue-600 transition-colors'>
                                     {item.name}
                                 </p>
-                                <p className='text-gray-500 text-xs sm:text-sm mt-0.5 font-medium truncate'>
+                                <p className='text-slate-500 text-xs sm:text-sm mt-0.5 font-medium truncate'>
                                     {item.speciality}
                                 </p>
-                                {/* Hide the "Book Visit" text entirely on very small mobile to prevent overflow, show on sm and up */}
-                                <div className='hidden sm:flex mt-4 pt-4 border-t border-gray-50 items-center justify-between text-sm text-primary font-medium opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300'>
-                                    Book Visit
-                                    <span className='text-lg'>→</span>
-                                </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
 
+            {/* --- Enterprise Button --- */}
             {!isLoading && (
                 <button
                     onClick={() => {
                         navigate('/doctors');
                         window.scrollTo(0, 0);
                     }}
-                    className='group mt-10 sm:mt-12 flex items-center gap-2 bg-white border-2 border-gray-100 text-gray-700 px-8 py-3 sm:px-10 sm:py-3.5 rounded-full text-sm sm:text-base font-medium hover:border-primary hover:text-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300'
+                    className='group mt-8 flex items-center gap-3 bg-white border border-slate-300 text-slate-700 px-8 py-3 rounded-lg text-sm font-semibold hover:border-blue-600 hover:text-blue-600 hover:shadow-md transition-all duration-300'
                 >
                     View All Doctors
-                    <span className='transition-transform duration-300 group-hover:translate-x-1'>→</span>
+                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
             )}
         </div>
