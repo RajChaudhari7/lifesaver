@@ -16,34 +16,34 @@ const Navbar = () => {
         navigate('/');
     };
 
-    // Enterprise-grade tab styling - strictly aligned to the bottom of the navbar
+    // FIX 2: Simplified NavLink Style. Removed 'h-full'.
     const navLinkStyle = ({ isActive }) =>
-        `relative flex items-center h-full px-4 text-sm font-semibold transition-colors duration-200 ${
+        `relative py-1 text-sm font-bold tracking-wide transition-colors duration-200 ${
             isActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900'
         }`;
 
     return (
         <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm w-full">
-            {/* The container is explicitly h-20 (80px) tall */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between gap-8">
                 
-                {/* --- Logo (flex-shrink-0 prevents it from getting squished) --- */}
+                {/* --- FIX 1: Constrained Logo --- */}
+                {/* Using h-10 md:h-12 and w-auto ensures the logo NEVER exceeds the navbar height */}
                 <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
                     <img
                         src={assets.logo}
-                        className="w-28 md:w-32 hover:opacity-90 transition-opacity"
+                        className="h-10 md:h-12 w-auto object-contain hover:opacity-90 transition-opacity"
                         alt="Life Saver Logo"
                     />
                 </div>
 
-                {/* --- Desktop Navigation (Takes up full height so borders align perfectly) --- */}
-                <nav className="hidden md:flex items-center justify-center h-full gap-2 lg:gap-6 flex-1">
+                {/* --- Desktop Navigation --- */}
+                <nav className="hidden md:flex items-center justify-center gap-6 lg:gap-8 flex-1">
                     <NavLink to="/" className={navLinkStyle}>
                         {({ isActive }) => (
                             <>
                                 Home
-                                {/* The active indicator now sits exactly at the bottom border */}
-                                <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-md transition-transform duration-300 origin-bottom ${isActive ? 'scale-y-100' : 'scale-y-0'}`}></span>
+                                {/* The active indicator now sits exactly 6px (-bottom-1.5) under the text */}
+                                <span className={`absolute -bottom-1.5 left-0 w-full h-[3px] bg-blue-600 rounded-full transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0'}`}></span>
                             </>
                         )}
                     </NavLink>
@@ -51,7 +51,7 @@ const Navbar = () => {
                         {({ isActive }) => (
                             <>
                                 Find Doctors
-                                <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-md transition-transform duration-300 origin-bottom ${isActive ? 'scale-y-100' : 'scale-y-0'}`}></span>
+                                <span className={`absolute -bottom-1.5 left-0 w-full h-[3px] bg-blue-600 rounded-full transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0'}`}></span>
                             </>
                         )}
                     </NavLink>
@@ -59,7 +59,7 @@ const Navbar = () => {
                         {({ isActive }) => (
                             <>
                                 About Us
-                                <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-md transition-transform duration-300 origin-bottom ${isActive ? 'scale-y-100' : 'scale-y-0'}`}></span>
+                                <span className={`absolute -bottom-1.5 left-0 w-full h-[3px] bg-blue-600 rounded-full transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0'}`}></span>
                             </>
                         )}
                     </NavLink>
@@ -67,7 +67,7 @@ const Navbar = () => {
                         {({ isActive }) => (
                             <>
                                 Contact
-                                <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-md transition-transform duration-300 origin-bottom ${isActive ? 'scale-y-100' : 'scale-y-0'}`}></span>
+                                <span className={`absolute -bottom-1.5 left-0 w-full h-[3px] bg-blue-600 rounded-full transition-transform duration-300 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0'}`}></span>
                             </>
                         )}
                     </NavLink>
@@ -153,7 +153,7 @@ const Navbar = () => {
                 }`}
             >
                 <div className="flex justify-between items-center p-6 border-b border-slate-100">
-                    <img src={assets.logo} className="w-28" alt="logo" />
+                    <img src={assets.logo} className="h-10 w-auto object-contain" alt="logo" />
                     <button onClick={() => setOpen(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors">
                         <X size={20} />
                     </button>
