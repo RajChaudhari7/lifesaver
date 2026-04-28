@@ -1,22 +1,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-*{
-    font-family: Outfit;
+@layer base {
+  /* Apply font to body instead of universal selector (*), and include fallbacks */
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    @apply bg-slate-50 text-slate-900 antialiased; /* Base enterprise colors and crisp text */
+  }
 }
 
-.active hr{
-    @apply block
+@layer utilities {
+  /* Instead of hiding the scrollbar completely (which is bad for accessibility), 
+    we create a custom, sleek "macOS style" scrollbar for a premium feel. 
+  */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+  }
+
+  /* Support for Firefox */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent; /* Tailwind slate-300 */
+  }
+
+  /* If you ABSOLUTELY must hide the scrollbar for a specific horizontal list, 
+    use a utility class rather than hiding it globally.
+  */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 }
 
-::-webkit-scrollbar{
-    @apply hidden
-}
+/* NOTE: For professional React apps, it is highly recommended to handle active 
+  states dynamically inside the components rather than using CSS selectors here. 
+  (See section below). If you must keep them here, organize them like this: 
+*/
+@layer components {
+  .active hr {
+    @apply block;
+  }
 
-@media (max-width:740px){
-    .active p{
-        @apply text-white bg-primary
+  @media (max-width: 768px) { /* Standardized to standard Tailwind md breakpoint */
+    .active p {
+      @apply text-white bg-blue-600 rounded-md transition-colors duration-300;
     }
+  }
 }
